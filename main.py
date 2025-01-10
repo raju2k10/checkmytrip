@@ -22,7 +22,9 @@ st.header("Top 5 Travel Recommendations")
 
 st.subheader("Discover the must-visit places in any country")
 
-country = st.text_input("Enter a country:")
+countries = ["India", "Netherlands", "Paris", "Thailand", "Germany", "Dubai", "Russia", "Portugal", "Spain", "Hungary"]
+country = st.selectbox("Select a country:", options=countries)
+
 date = st.date_input("Date of Travel:")
 adults = st.number_input("Number of Adults:", min_value=1, step=1, value=1)
 kids = st.number_input("Number of Kids:", min_value=0, step=1, value=0)
@@ -32,4 +34,4 @@ if st.button("Generate Recommendations"):
         recommendations = recommendation_chain.invoke({"country": country, "adults": adults, "kids": kids, "date": date})
         st.write(recommendations.content)
     else:
-        st.warning("Please enter a valid country name.")
+        st.warning("Please select a valid country.")

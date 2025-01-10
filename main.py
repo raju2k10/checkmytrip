@@ -7,9 +7,9 @@ import os
 os.environ['GOOGLE_API_KEY'] = st.secrets['GOOGLE_API_KEY']
 
 # Create a prompt template for generating recommendations
-recommendation_template = "Give me the top 5 recommendations to visit in {country}"
+recommendation_template = "Give me the top 5 recommendations to visit in {country} for {adults} adults and {kids} kids traveling on {date}"
 
-recommendation_prompt = PromptTemplate(template=recommendation_template, input_variables=['country'])
+recommendation_prompt = PromptTemplate(template=recommendation_template, input_variables=['country', 'adults', 'kids', 'date'])
 
 # Initialize Google's Gemini model
 gemini_model = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest")
@@ -23,10 +23,13 @@ st.header("Top 5 Travel Recommendations")
 st.subheader("Discover the must-visit places in any country")
 
 country = st.text_input("Enter a country:")
+date = st.date_input("Date of Travel:")
+adults = st.number_input("Number of Adults:", min_value=1, step=1, value=1)
+kids = st.number_input("Number of Kids:", min_value=0, step=1, value=0)
 
 if st.button("Generate Recommendations"):
     if country.strip():
-        recommendations = recommendation_chain.invoke({"country": country})
+        recommendations = recommendation_chain.invoke({"country": country, "adults": adults, "kids": kids, "date": date})
         st.write(recommendations.content)
     else:
         st.warning("Please enter a valid country name.")

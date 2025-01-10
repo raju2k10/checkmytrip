@@ -7,7 +7,7 @@ import os
 os.environ['GOOGLE_API_KEY'] = st.secrets['GOOGLE_API_KEY']
 
 # Create a prompt template for generating recommendations
-recommendation_template = "Give me the top 5 recommendations to visit in {country} for {adults} adults and {kids} kids traveling on {date}"
+recommendation_template = "Give me the top 5 recommendations to visit in {country} for {adults} adults and {kids} kids traveling on {date} with activity plans"
 
 recommendation_prompt = PromptTemplate(template=recommendation_template, input_variables=['country', 'adults', 'kids', 'date'])
 
@@ -20,7 +20,7 @@ recommendation_chain = recommendation_prompt | gemini_model
 # Streamlit app setup
 st.header("Top 5 Travel Recommendations")
 
-st.subheader("Discover the must-visit places in any country")
+st.subheader("Discover the must-visit places")
 
 countries = ["India", "Netherlands", "Paris", "Thailand", "Germany", "Dubai", "Russia", "Portugal", "Spain", "Hungary"]
 country = st.selectbox("Select a country:", options=countries)

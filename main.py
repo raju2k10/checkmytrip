@@ -1,37 +1,32 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain import LLMChain
 from langchain import PromptTemplate
-
 import streamlit as st
 import os
 
+# Set up API key for Google's Generative AI
 os.environ['GOOGLE_API_KEY'] = st.secrets['GOOGLE_API_KEY']
 
-# Create prompt template for generating tweets
+# Create a prompt template for generating recommendations
+recommendation_template = "Give me the top 5 recommendations to visit in {country}"
 
-tweet_template = "Give me {number} tweets on {topic}"
-
-tweet_prompt = PromptTemplate(template = tweet_template, input_variables = ['number', 'topic'])
+recommendation_prompt = PromptTemplate(template=recommendation_template, input_variables=['country'])
 
 # Initialize Google's Gemini model
-gemini_model = ChatGoogleGenerativeAI(model = "gemini-1.5-flash-latest")
+gemini_model = ChatGoogleGenerativeAI(model="gemini-1.5-flash-latest")
 
+# Create the LLM chain for generating recommendations
+recommendation_chain = recommendation_prompt | gemini_model
 
-# Create LLM chain using the prompt template and model
-tweet_chain = tweet_prompt | gemini_model
+# Streamlit app setup
+st.header("Top 5 Travel Recommendations")
 
+st.subheader("Discover the must-visit places in any country")
 
-import streamlit as st
+country = st.text_input("Enter a country:")
 
-st.header("Tweet Generator")
-
-st.subheader("Generate tweets using Generative AI")
-
-topic = st.text_input("Topic")
-
-number = st.number_input("Number of tweets", min_value = 1, max_value = 10, value = 1, step = 1)
-
-if st.button("Generate"):
-    tweets = tweet_chain.invoke({"number" : number, "topic" : topic})
-    st.write(tweets.content)
-    
+if st.button("Generate Recommendations"):
+    if country.strip():
+        recommendations = recommendation_chain.invoke({"country": country})
+        st.write(recommendations.content)
+    else:
+        st.warning("Please enter a valid country name.")
